@@ -12,6 +12,7 @@ C Near field correlator and python scripts to execute correlation
  
 # Installation
 ```bash
+cd correlator-kana
 mkdir build
 cd build
 cmake ..
@@ -28,3 +29,17 @@ sudo make install
 | dataSender    |                 |
 | freqCorrect   |                 |
 | timeCorrect   |                 |
+
+
+# Python scripts 
+| **Utilities**   | **Description** |
+|-----------------|-----------------|
+| coefgen.py      |                 |
+| data_plotter.py |                 |
+| data_sender.py  |                 |
+| kana.py         |                 |
+| kanamakectrl.py |                 |
+| mltdict.py      |                 |
+| timeCorrect     |                 |
+ | usrdict.py      |                 |
+ | vex_2.py        |                 |

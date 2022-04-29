@@ -31,7 +31,8 @@ long getDataSize(JSON_Tree* params) {
     return size;
 }
 
-char *getDataFilePath(char *station) {
+char *getDataFilePath(char *station, JSON_Tree* params) {
+    char* DATA_DIR = JSON_getString(params->tree, "root:data_dir");
     DIR* directory;
     if ((directory = opendir(DATA_DIR)) == NULL) {
         panic("cannot open data dir");
@@ -96,7 +97,7 @@ int main(int argc, char** argv) {
 
     // read data file
     long size = getDataSize(params);
-    char* dataFilePath = getDataFilePath(station);
+    char* dataFilePath = getDataFilePath(station, params);
 
     FILE* dataFile = fopen(dataFilePath, "rb");
     if (dataFile == NULL) {

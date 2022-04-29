@@ -77,6 +77,14 @@ def vex2dic(filename, highest_job):
     json_out["m1_buffer_end"] = sys.argv[4]
     json_out["m1_fft_compress"] = 0.00005
     json_out["m1_spectra_window(Hz)"] = 100_000
+    json_out["data_dir"] = sys.argv[7]
+    if sys.argv[8] == "true":
+        json_out["realtime"] = True
+        json_out["rt_in_address"] = sys.argv[9]
+        json_out["rt_out_address"] = sys.argv[10]
+        json_out["rt_batch_length"] = sys.argv[11]
+    else:
+        json_out["realtime"] = False
 
     if highest_job != 'M1':
         json_out["m2_Tu"] = 0.0002
@@ -87,7 +95,7 @@ def vex2dic(filename, highest_job):
 
     json_out["stations"] = OrderedDict()
     for station in vex["STATION"]:
-        json_out["stations"][station] = OrderedDict()
+        json_out["stations"][station] = {"format": "VDIF"}
 
     return json_out
 
@@ -121,6 +129,7 @@ def get_RFs(vex, station):
 def get_LO(vex, station):
     mode = get_mode(vex)
     freq = "LO@0MHz"
+    print(vex["MODE"][mode])
     for i in vex["MODE"][mode].get("IF"):
         if i[1] == station:
             freq = i[0]
@@ -190,7 +199,11 @@ if __name__ == "__main__":
     controlFile = "/".join(sys.argv[2].split("/")[0:-1]) + "/" + paramPath + "/" + sys.argv[2].split("/")[-1] + ".ctrl"
 
     for station in json_out["stations"]:
-        if os.path.isfile(station + "_" + sys.argv[3] + ".log"):
+        # irib22ib.log
+        log_file_name = sys.argv[2][0:len(sys.argv[2]) - len(sys.argv[2].split("/")[-1])] + \
+                        sys.argv[2].split("/")[-1]+station.lower()+".log"
+        if os.path.isfile(log_file_name):
+            # this do not work for multi mode observation
             json_out["stations"][station]["target(Hz)"] = get_spike_freqs(station, vex_file)
 
         if os.path.isfile(station + "_" + filename + ".doc"):
@@ -198,4 +211,4 @@ if __name__ == "__main__":
 
     control_file = open(controlFile, "w")
     control_file.write(json.dumps(json_out, indent=4))
-
+    sys.exit(0)

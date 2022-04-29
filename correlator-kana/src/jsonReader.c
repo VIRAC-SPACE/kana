@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <stdbool.h>
 #include "../include/JSON_parser.h"
 #include "../include/jsonReader.h"
 #include "../include/panic.h"
@@ -80,6 +81,23 @@ long JSON_getInt(JSON_TreeNode* node, char* str) {
         panic(message);
     }
     return node->value.lng;
+}
+
+
+bool JSON_getBool(JSON_TreeNode* node, char* str) {
+    node = getValue(node, str);
+    if (node == NULL || node->type != BOOL) {
+        char *message = malloc(strlen(str) + 32);
+        sprintf(message, "cannot read '%s' (bool)", str);
+        panic(message);
+    }
+    if (strcmp (node->value.chr, "true") == 0) {
+        return true;
+    }
+    else{
+        return false;
+    }
+    ///return node->value.chr;
 }
 
 double JSON_getFloat(JSON_TreeNode* node, char* str) {
@@ -250,10 +268,10 @@ static int readCallback(void* ctx, int type, const JSON_value* value) {
                && getStackTop(stack)->type == ARRAY) {
                 addNode(&(tree->current));
                 tree->current->value.chr = "true";
-                tree->current->type = STRING;
+                tree->current->type = BOOL;
             } else if (tree->current->type == EMPTY) {
                 tree->current->value.chr = "true";
-                tree->current->type = STRING;
+                tree->current->type = BOOL;
             }
             break;
 
@@ -262,10 +280,10 @@ static int readCallback(void* ctx, int type, const JSON_value* value) {
                 && getStackTop(stack)->type == ARRAY) {
                 addNode(&(tree->current));
                 tree->current->value.chr = "false";
-                tree->current->type = STRING;
+                tree->current->type = BOOL;
             } else if(tree->current->type == EMPTY) {
                 tree->current->value.chr = "false";
-                tree->current->type = STRING;
+                tree->current->type = BOOL;
             }
             break;
 

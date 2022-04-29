@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <vdifio.h>
 #include <sys/time.h>
-#include "../include/directories.h"
+#include <stdbool.h>
 #include "../include/panic.h"
 #include "../include/utils.h"
 #include "../include/socket.h"
@@ -14,6 +14,7 @@
 
 
 void processDataFolder(JSON_Tree* params, char* station) {
+    char* DATA_DIR = JSON_getString(params->tree, "root:data_dir");
     DIR* directory;
     if ((directory = opendir(DATA_DIR)) == NULL){
         panic("cannot open data dir");
@@ -22,13 +23,10 @@ void processDataFolder(JSON_Tree* params, char* station) {
     struct dirent* entry;
     while ((entry = readdir(directory)) != NULL ) {
         if (isKanaFile(entry, DATA_DIR, station)) {
-            printf("\t%s ", entry->d_name);
             if (isVDIF(params, station)) {
-                printf("(VDIF) : ");
                 fflush(stdout);
                 processVDIFFile(params, entry, station);
             } else {
-                printf("(MARK5) : ");
                 fflush(stdout);
                 processDataFile(params, entry, station);
             }
@@ -42,6 +40,7 @@ void processDataFolder(JSON_Tree* params, char* station) {
 }
 
 void processDataFile(JSON_Tree* params, struct dirent* entry, char* station) {
+    char* DATA_DIR = JSON_getString(params->tree, "root:data_dir");
     char* filePath = malloc(strlen(DATA_DIR) + strlen(entry->d_name) + 1);
     sprintf(filePath, "%s%s", DATA_DIR, entry->d_name);
 
@@ -69,6 +68,7 @@ void processDataFile(JSON_Tree* params, struct dirent* entry, char* station) {
 }
 
 void processVDIFFile(JSON_Tree* params, struct dirent* entry, char* station) {
+    char* DATA_DIR = JSON_getString(params->tree, "root:data_dir");
     char* filePath = malloc(strlen(DATA_DIR) + strlen(entry->d_name) + 1);
     sprintf(filePath, "%s%s", DATA_DIR, entry->d_name);
 
@@ -168,16 +168,13 @@ void processRealtimeData(JSON_Tree* params, char* station) {
 }
 
 CorrelationData* getCorrelationData(JSON_Tree* params, char* st, char* nm) {
+    char* DATA_DIR = JSON_getString(params->tree, "root:data_dir");
     char* bufferBeginStr = JSON_getString(params->tree, "root:m1_buffer_begin");
     double bufferBegin = timeToSecs(bufferBeginStr);
 
     char* bufferEndStr = JSON_getString(params->tree, "root:m1_buffer_end");
     double bufferEnd = timeToSecs(bufferEndStr);
-
     double bufferLength = bufferEnd - bufferBegin;
-
-    char* rtLenStr = JSON_getString(params->tree, "root:rt_batch_length");
-    double rtLen = timeToSecs(rtLenStr);
 
     // bits per second
     long discretization = JSON_getInt(params->tree, "root:discretization(Hz)");
@@ -190,9 +187,8 @@ CorrelationData* getCorrelationData(JSON_Tree* params, char* st, char* nm) {
 
     unsigned long bufferSize = floor(bufferLength * discretization) / 8;
     unsigned long bufferBeginByte = floor(bufferBegin * discretization) / 8;
-    unsigned long rtSize = floor(rtLen * discretization) / 8;
-
-    long rt = JSON_getInt(params->tree, "root:realtime");
+    
+    bool rt = JSON_getBool(params->tree, "root:realtime");
     long obsLength = JSON_getInt(params->tree, "root:observation_length");
 
     CorrelationData* cdata = malloc(sizeof(CorrelationData));
@@ -208,13 +204,16 @@ CorrelationData* getCorrelationData(JSON_Tree* params, char* st, char* nm) {
     cdata->station = strdup(st);
     cdata->obsTime = obsLength;
 
-    if (rt == 1) {
+    if (rt == true) {
+        char* rtLenStr = JSON_getString(params->tree, "root:rt_batch_length");
+        double rtLen = timeToSecs(rtLenStr);
+        unsigned long rtSize = floor(rtLen * discretization) / 8;
         cdata->size = rtSize;
         cdata->begin = 0;
         cdata->epoch = time(NULL);
         cdata->fileName = "rt.spectra";
     } else if (isVDIF(params, st)) {
-        addVDIFData(cdata, nm);
+        addVDIFData(cdata, nm, params);
     } else {
         char* filepath = malloc(64);
         sprintf(filepath, "%s%s", DATA_DIR, nm);
@@ -233,7 +232,8 @@ CorrelationData* getCorrelationData(JSON_Tree* params, char* st, char* nm) {
     return cdata;
 }
 
-void addVDIFData(CorrelationData* cdata, char* nm) {
+void addVDIFData(CorrelationData* cdata, char* nm, JSON_Tree* params) {
+    char* DATA_DIR = JSON_getString(params->tree, "root:data_dir");
     char* filePath = malloc(64);
     sprintf(filePath, "%s%s", DATA_DIR, nm);
 

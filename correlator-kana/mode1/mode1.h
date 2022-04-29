@@ -11,7 +11,7 @@ void processVDIFFile(JSON_Tree* params, struct dirent* dit, char* station);
 void processRealtimeData(JSON_Tree* params, char* station);
 
 CorrelationData* getCorrelationData(JSON_Tree* params, char* st, char* nm);
-void addVDIFData(CorrelationData* cdata, char* nm);
+void addVDIFData(CorrelationData* cdata, char* nm, JSON_Tree* params);
 void setTargetFreq(JSON_Tree* params, CorrelationData* cdata, int ch);
 
 char* addChanToFileName(char* dataFile, int chan);

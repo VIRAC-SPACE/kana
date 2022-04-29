@@ -1,6 +1,8 @@
 #ifndef KANA_JSONREADER_H
 #define KANA_JSONREADER_H
 
+#include <stdbool.h>
+
 #include "JSON_parser.h"
 
 /* possible values of the type */
@@ -19,7 +21,8 @@ typedef enum {
     INT,
     FLOAT,
     STRING,
-    ARRAY
+    ARRAY,
+    BOOL
 } JSON_Type;
 
 typedef union {
@@ -51,6 +54,7 @@ int JSON_read(JSON_Tree* jr, char* fname);
 
 char* JSON_getString(JSON_TreeNode* node, char* str);
 long JSON_getInt(JSON_TreeNode* node, char* str);
+bool JSON_getBool(JSON_TreeNode* node, char* str);
 double JSON_getFloat(JSON_TreeNode* node, char* str);
 int JSON_hasKey(JSON_TreeNode* node, char* str);
 

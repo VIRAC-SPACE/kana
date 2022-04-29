@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
+#include <stdbool.h>
 #include <mpi.h>
 #include <unistd.h>
 #include <libgen.h>
@@ -26,7 +26,7 @@ int  main(int argc, char** argv) {
         MPI_Abort(MPI_COMM_WORLD, stat);
     }
 
-    int rank;
+    int rank = 0;
     int numtasks;
     MPI_Comm_size(MPI_COMM_WORLD,&numtasks);
     int RANK_OF_NODE;
@@ -53,7 +53,7 @@ int  main(int argc, char** argv) {
         panic("cannot read control file");
     }
 
-    if (JSON_getInt(params->tree, "root:realtime") == 1) {
+    if (JSON_getBool(params->tree, "root:realtime") == true) {
         processRealtimeData(params, station);
     } else {
         processDataFolder(params, station);
@@ -62,6 +62,7 @@ int  main(int argc, char** argv) {
     free(directory);
     free(params->tree);
     free(params);
+    MPI_Barrier( MPI_COMM_WORLD );
     MPI_Finalize();
     return 0;
 }
