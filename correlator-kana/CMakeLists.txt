@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION  3.20.1)
 
-project(Kana)
+project(Kana LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -38,6 +38,7 @@ add_executable(timeCorrect timeCorrect/main.c)
 add_executable(m1 mode1/main.c)
 add_executable(m2 mode2/main.c)
 add_executable(m3 mode3/main.c)
+
 
 target_link_libraries(dataSender PUBLIC socket JSON_parser jsonReader utils panic)
 target_link_libraries(freqCorrect PUBLIC JSON_parser jsonReader panic utils hzCorrect MPI::MPI_CXX -lm coefficients)
