@@ -43,7 +43,7 @@ def doc2dic(filename):
         data = myfile.read().replace('\n', '').replace(' ', '')
     data = re.sub(".*\\|A3\\|\\|", "", data)
     data = re.sub("\\|\\|", "\n", data)
-
+    
     json_out = list()
     for line in data.splitlines():
         line_list = line.split("|")
@@ -78,7 +78,7 @@ def vex2dic(filename, highest_job):
     json_out["m1_fft_compress"] = 0.00005
     json_out["m1_spectra_window(Hz)"] = 100_000
     json_out["data_dir"] = sys.argv[7]
-    if sys.argv[8] == "true":
+    if sys.argv[8] == "True" or  sys.argv[8] == "true":
         json_out["realtime"] = True
         json_out["rt_in_address"] = sys.argv[9]
         json_out["rt_out_address"] = sys.argv[10]
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Error: arguments not provided")
         exit(-1)
-
+        
     highest_job = sys.argv[1].upper()
     path = os.path.split(sys.argv[2])
     vex_file = sys.argv[2] + ".vix"
@@ -197,7 +197,7 @@ if __name__ == "__main__":
     json_out = vex2dic(vex_file, highest_job)
 
     controlFile = "/".join(sys.argv[2].split("/")[0:-1]) + "/" + paramPath + "/" + sys.argv[2].split("/")[-1] + ".ctrl"
-
+        
     for station in json_out["stations"]:
         # irib22ib.log
         log_file_name = sys.argv[2][0:len(sys.argv[2]) - len(sys.argv[2].split("/")[-1])] + \
