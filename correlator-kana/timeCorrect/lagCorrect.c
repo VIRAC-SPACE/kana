@@ -1,12 +1,11 @@
 #include <stdio.h>
-#include <time.h>
 #include <math.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <dirent.h>
 #include "../include/directories.h"
 #include "../include/panic.h"
 #include "../include/utils.h"
+#include "../include/coefficients.h"
 #include "lagCorrect.h"
 
 void processDataFolder(JSON_Tree* params, char* station) {

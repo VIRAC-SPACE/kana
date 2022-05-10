@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <mpi.h>
 #include <libgen.h>
 #include <sys/stat.h>

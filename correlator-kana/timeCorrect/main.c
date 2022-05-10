@@ -1,13 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <mpi.h>
-#include <math.h>
 #include <unistd.h>
 #include <libgen.h>
-#include <sys/stat.h>
 #include "../include/jsonReader.h"
-#include "../include/directories.h"
 #include "../include/panic.h"
 #include "../include/utils.h"
 #include "lagCorrect.h"

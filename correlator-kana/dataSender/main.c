@@ -9,7 +9,6 @@
 #include "../include/socket.h"
 #include "../include/jsonReader.h"
 #include "../include/utils.h"
-#include "../include/directories.h"
 
 int isVDIF(JSON_Tree* params, char* station) {
     char* str = malloc(64);

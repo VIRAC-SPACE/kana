@@ -1,9 +1,3 @@
-#include <string.h>
-#include <assert.h>
-#include <ctype.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 

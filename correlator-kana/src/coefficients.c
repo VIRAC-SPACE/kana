@@ -2,7 +2,6 @@
 #include "stdio.h"
 
 #include "../include/coefficients.h"
-#include "../include/jsonReader.h"
 
 void getCoefficients(Coefficients* coeff, JSON_Tree* coeffTree, JSON_Tree* jsonParam, char* signalName) {
     char* str = malloc(sizeof(char) * 255);

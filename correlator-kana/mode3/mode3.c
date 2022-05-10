@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include <time.h>
 #include <math.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <dirent.h>
 #include "../include/directories.h"
 #include "../include/panic.h"
